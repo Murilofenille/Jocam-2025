@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JOCAM – Jogos Interclasse</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+  nav { background: #007BFF; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+  nav a { color: white; margin-left: 15px; text-decoration: none; font-weight: bold; }
+  nav a:hover { color: #FFD700; }
+  header { text-align: center; padding: 40px 20px; background: #e0f0ff; }
+  header h1 { color: #007BFF; font-size: 3em; margin-bottom: 10px; }
+  header p { font-size: 1.2em; }
+  .contador { background: #FFD700; color: #007BFF; display: inline-block; padding: 15px 25px; border-radius: 20px; margin-top: 20px; font-weight: bold; }
+  section { padding: 20px; max-width: 1200px; margin: auto; }
+  h2 { color: #007BFF; margin-bottom: 20px; }
+  /* Cards da programação */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+  .card { background: #e6f2ff; border-left: 6px solid #007BFF; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
+  .card:hover { transform: translateY(-3px); }
+  .card strong { color: #007BFF; font-size: 1.1em; }
+  /* Notícias */
+  .noticia { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 10px; }
+  /* Contato */
+  form { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: auto; }
+  input, textarea { padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 100%; }
+  button { background: #007BFF; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+  button:hover { background: #0056b3; }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div>JOCAM</div>
+  <div>
+    <a href="#inicio">Início</a>
+    <a href="#programacao">Programação</a>
+    <a href="#resultados">Resultados</a>
+    <a href="#noticias">Notícias</a>
+    <a href="#galeria">Galeria</a>
+    <a href="#contato">Contato</a>
+  </div>
+</nav>
+
+<!-- Início -->
+<header id="inicio">
+  <h1>JOCAM – Jogos Interclasse</h1>
+  <p>Unindo salas, fortalecendo a amizade!</p>
+  <div class="contador" id="contador">Faltam X dias para os jogos!</div>
+</header>
+
+<!-- Programação -->
+<section id="programacao">
+  <h2>Programação</h2>
+  <div class="grid" id="programacao-grid"></div>
+</section>
+
+<!-- Resultados -->
+<section id="resultados">
+  <h2>Resultados</h2>
+  <p>Em breve os resultados estarão disponíveis aqui.</p>
+</section>
+
+<!-- Notícias -->
+<section id="noticias">
+  <h2>Notícias</h2>
+  <div class="noticia">
+    <strong>Abertura oficial marcada!</strong>
+    <p>Os jogos começam dia 25 de setembro com desfile das turmas.</p>
+  </div>
+</section>
+
+<!-- Galeria -->
+<section id="galeria">
+  <h2>Galeria</h2>
+  <div class="grid">
+    <div class="card" style="text-align:center; height:150px; display:flex; align-items:center; justify-content:center;">Foto 1</div>
+    <div class="card" style="text-align:center; height:150px; display:flex; align-items:center; justify-content:center;">Foto 2</div>
+    <div class="card" style="text-align:center; height:150px; display:flex; align-items:center; justify-content:center;">Foto 3</div>
+  </div>
+</section>
+
+<!-- Contato -->
+<section id="contato">
+  <h2>Contato</h2>
+  <form>
+    <input type="text" placeholder="Nome" />
+    <input type="email" placeholder="Email" />
+    <textarea rows="4" placeholder="Mensagem"></textarea>
+    <button type="submit">Enviar</button>
+  </form>
+</section>
+
+<script>
+// Contagem regressiva
+const dataJogos = new Date("2025-09-27"); // coloque a data dos jogos
+const contador = document.getElementById("contador");
+function atualizarContador() {
+  const hoje = new Date();
+  const diff = dataJogos - hoje;
+  const dias = Math.ceil(diff / (1000*60*60*24));
+  contador.innerText = dias > 0 ? `Faltam ${dias} dias para os jogos!` : `Os jogos começaram!`;
+}
+atualizarContador();
+setInterval(atualizarContador, 3600000); // atualiza a cada hora
+
+// Programação: puxando do Google Sheets CSV
+const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTPG5YXu8zpv3Jape7-DQwl_5Gfy_4oOtcJl55Tid6w5-5X5LUcDLAiavsXWAFI95FriAcAlTJWlL0i/pub?output=csv";
+fetch(url)
+  .then(res => res.text())
+  .then(csv => {
+    const linhas = csv.split("\n").slice(1);
+    const container = document.getElementById("programacao-grid");
+    linhas.forEach(linha => {
+      const [Dia, Horario, Modalidade, Partida] = linha.split(",");
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<strong>${Modalidade}</strong><br>Dia: ${Dia}<br>Horário: ${Horario}<br>Partida: ${Partida}`;
+      container.appendChild(card);
+    });
+  });
+</script>
+
+</body>
+</html>
